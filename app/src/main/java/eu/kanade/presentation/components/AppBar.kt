@@ -1,10 +1,16 @@
 package eu.kanade.presentation.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -38,6 +44,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -301,6 +308,7 @@ fun SearchToolbar(
 
     AppBar(
         modifier = modifier,
+        backgroundColor = if (searchQuery != null) Color.Transparent else null,
         titleContent = {
             if (searchQuery == null) return@AppBar titleContent()
 
@@ -325,14 +333,14 @@ fun SearchToolbar(
                     .showSoftKeyboard(remember { searchQuery.isEmpty() })
                     .clearFocusOnSoftKeyboardHide(),
                 textStyle = MaterialTheme.typography.titleMedium.copy(
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = Color.White,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                 ),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 onKeyboardAction = { searchAndClearFocus() },
                 lineLimits = TextFieldLineLimits.SingleLine,
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
+                cursorBrush = SolidColor(Color(0xFFC084FC)),
                 interactionSource = interactionSource,
                 decorator = TextFieldDefaults.decorator(
                     state = searchFieldState,
@@ -347,12 +355,22 @@ fun SearchToolbar(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.titleMedium.copy(
-                                fontSize = 18.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Normal,
+                                color = Color(0xFF94A3B8),
                             ),
                         )
                     },
-                    container = {},
+                    container = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(42.dp)
+                                .clip(RoundedCornerShape(999.dp))
+                                .background(Color(0xFF131422))
+                                .border(BorderStroke(1.dp, Color(0xFF2A243D)), RoundedCornerShape(999.dp)),
+                        )
+                    },
                 ),
             )
         },

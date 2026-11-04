@@ -1,7 +1,9 @@
 package eu.kanade.presentation.download
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Arrangement
@@ -11,10 +13,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,14 +41,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import tachiyomi.presentation.core.util.plus
 import eu.kanade.presentation.components.DropdownMenu
 import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.source.model.Page
@@ -143,7 +153,7 @@ fun DownloadQueueList(
             .fillMaxSize()
             .onGloballyPositioned { listCoordinates.value = it },
         state = lazyListState,
-        contentPadding = contentPadding,
+        contentPadding = contentPadding + PaddingValues(bottom = 96.dp),
     ) {
         sectionsState.forEach { section ->
             item(key = section.key) {
@@ -277,21 +287,38 @@ private fun ReorderableCollectionItemScope.DownloadQueueHeader(
     onDragStarted: () -> Unit,
     onDragStopped: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.padding(top = MaterialTheme.padding.small),
-        color = listItemContainerColor(isDragging),
-        shadowElevation = listItemElevation(isDragging),
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Row(
-            modifier = Modifier.padding(end = MaterialTheme.padding.small),
-            verticalAlignment = Alignment.CenterVertically,
+        Surface(
+            shape = RoundedCornerShape(999.dp),
+            color = Color(0x338B5CF6),
+            border = BorderStroke(1.dp, Color(0xFF3B2D54)),
         ) {
-            ListGroupHeader(
-                text = "${section.name} (${section.downloads.size})",
-                modifier = Modifier.weight(1f),
-            )
-            DragHandle(onDragStarted = onDragStarted, onDragStopped = onDragStopped)
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFC084FC)),
+                )
+                Text(
+                    text = "${section.name} (${section.downloads.size})",
+                    color = Color(0xFFC084FC),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                )
+            }
         }
+        DragHandle(onDragStarted = onDragStarted, onDragStopped = onDragStopped)
     }
 }
 
@@ -313,37 +340,46 @@ private fun ReorderableCollectionItemScope.DownloadQueueItem(
     val animatedProgress by animateFloatAsState(progress?.fraction ?: 0f, label = "progress")
 
     Surface(
-        modifier = modifier,
-        color = listItemContainerColor(isDragging),
-        shadowElevation = listItemElevation(isDragging),
+        shape = RoundedCornerShape(16.dp),
+        color = if (isDragging) Color(0xFF261D42) else Color(0xFF141221),
+        border = BorderStroke(1.dp, if (isDragging) Color(0xFF8B5CF6) else Color(0xFF2A243D)),
+        modifier = modifier
+            .padding(horizontal = 14.dp, vertical = 4.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp)),
     ) {
         Row(
-            modifier = Modifier.padding(
-                start = MaterialTheme.padding.small,
-                end = MaterialTheme.padding.extraSmall,
-            ),
+            modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             DragHandle(onDragStarted = onDragStarted, onDragStopped = onDragStopped)
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = MaterialTheme.padding.small),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.extraSmall),
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
                         text = download.manga.title,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f, fill = false),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                        ),
                     )
                     progress?.let {
                         Text(
                             text = "${it.downloadedPages}/${it.pageCount}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF10B981),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
                         )
                     }
                 }
@@ -351,13 +387,19 @@ private fun ReorderableCollectionItemScope.DownloadQueueItem(
                     text = download.chapter.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color(0xFFC084FC),
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 )
                 LinearProgressIndicator(
                     progress = { animatedProgress },
+                    color = Color(0xFF8B5CF6),
+                    trackColor = Color(0xFF2A243D),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = MaterialTheme.padding.extraSmall),
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(999.dp)),
                 )
             }
             DownloadQueueItemMenu(

@@ -28,13 +28,16 @@ import java.util.Locale
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
+import androidx.compose.ui.unit.dp
+import tachiyomi.presentation.core.util.plus
+
 @Composable
 fun StatsScreenContent(
     state: StatsScreenState.Success,
     paddingValues: PaddingValues,
 ) {
     LazyColumn(
-        contentPadding = paddingValues,
+        contentPadding = paddingValues + PaddingValues(bottom = 96.dp),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
     ) {
         item {

@@ -50,12 +50,12 @@ import eu.kanade.presentation.util.relativeTimeSpanString
 import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.ui.updates.UpdatesItem
 import mihon.icons.materialsymbols.MaterialSymbols
+import mihon.icons.materialsymbols.rounded.CalendarMonth
 import mihon.icons.materialsymbols.roundedfilled.Bookmark
 import mihon.icons.materialsymbols.roundedfilled.Circle
 import mihon.icons.materialsymbols.roundedfilled.PlayArrow
 import tachiyomi.domain.updates.model.UpdatesWithRelations
 import tachiyomi.i18n.MR
-import tachiyomi.presentation.core.components.ListGroupHeader
 import tachiyomi.presentation.core.components.material.DISABLED_ALPHA
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
@@ -113,10 +113,36 @@ internal fun LazyListScope.updatesUiItems(
     ) { item ->
         when (item) {
             is UpdatesUiModel.Header -> {
-                ListGroupHeader(
-                    modifier = Modifier.animateItem(),
-                    text = relativeDateText(item.date),
-                )
+                Box(
+                    modifier = Modifier
+                        .animateItem()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = Color(0x338B5CF6),
+                        border = BorderStroke(1.dp, Color(0xFF3B2D54)),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.CalendarMonth,
+                                contentDescription = null,
+                                tint = Color(0xFFC084FC),
+                                modifier = Modifier.size(14.dp),
+                            )
+                            Text(
+                                text = relativeDateText(item.date),
+                                color = Color(0xFFC084FC),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                            )
+                        }
+                    }
+                }
             }
             is UpdatesUiModel.Item -> {
                 val updatesItem = item.item

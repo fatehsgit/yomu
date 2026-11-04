@@ -86,7 +86,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: yomu-v0.21.7-release
+          name: yomu-v0.21.10-release
           path: |
             release-apks/*.apk
             release-apks/*.png
@@ -94,27 +94,39 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.8-yomu
-          name: "Yomu v0.21.8 (Dock Glossy Translucide, Déblocage Captures & Filtre Bibliothèque)"
+          tag_name: v0.21.10-yomu
+          name: "Yomu v0.21.10 (Refonte UI Complète — Écrans OLED Sombre, Capsules & Violet Néon)"
           body: |
-            ## Yomu v0.21.8 — Dock Glossy Translucide, Déblocage Captures & Filtre Bibliothèque
+            ## Yomu v0.21.10 — Refonte Visuelle Intégrale (Design Sombre OLED & Violet Néon)
 
             ### Nouveautés de cette version :
-            - **Dock Glossy Translucide & Design Épuré** :
-              - Verre fumé sombre translucide (`#99120F24` / 60% d'opacité) avec liseré violet élégant façon verre poli (*frosted glass*).
-              - Suppression intégrale de la surbrillance rectangulaire terne : l'onglet sélectionné s'illumine en violet éclatant (`#C084FC`) avec ripple subtil au toucher.
-            - **Déblocage complet des captures d'écran** :
-              - Neutralisation totale du `FLAG_SECURE` Android : captures d'écran et enregistrements autorisés partout dans l'application.
-            - **Déverrouillage du filtre « Téléchargé uniquement »** :
-              - Réinitialisation automatique au lancement pour restaurer immédiatement l'accès à tous les mangas de la bibliothèque (en ligne et hors ligne).
-              - Déverrouillage du filtre dans la boîte de dialogue de tri/filtre pour garder la main et désactiver le mode téléchargé en un clic.
-            - **Signature permanente (Keystore fixe)** :
-              - Clé cryptographique officielle Yomu conservée (mise à jour directe sans désinstallation préalable requise).
+            - **Écran Historique de lecture** :
+              - Cartes sombres individuelles (`#141221`) avec liseré violet subtil (`#2A243D`) et jaquettes arrondies 14dp.
+              - Bouton capsule interactif « Reprendre » en violet éclatant (`#8B5CF6`).
+              - Séparateurs chronologiques stylisés en pastilles sombres à puce lumineuse violette.
+            - **Écran Plus / Profil & Paramètres** :
+              - En-tête profil personnalisé Fateh avec badge Administrateur et statut de synchronisation NAS (`nasgroot` DS720+).
+              - Grandes cartes modulaires pour l'Apparence, la Bibliothèque, les Données et le Lecteur.
+              - Switch « Mode Incognito » revisité en violet néon et carte résumé de la file de téléchargement.
+            - **Écran Explorer / Sources & Extensions** :
+              - Encapsulation des sources dans des cartes sombres avec logos adoucis et micro-pastilles de langues.
+              - Boutons « Derniers » en pastilles et en-têtes d'extensions avec action « Tout mettre à jour » stylisée.
+            - **Écran Mises à jour** :
+              - Séparateurs temporels convertis en pastilles capsules et barre d'outils épurée sans bandeau gris opaque.
+            - **Écran Statistiques** :
+              - Tuiles OLED sombres avec bordures violettes et métriques ultra-contrastées en blanc pur.
+            - **File de téléchargement** :
+              - Cartes arrondies pour chaque téléchargement actif avec barre de progression fine violet néon (`#8B5CF6`).
+            - **Navigation Dock & Barre de recherche** :
+              - Dock translucide en verre dépoli (`#E6100E1D`) avec pastille pilule douce sur l'onglet actif.
+              - Barre de recherche globale convertie en capsule sombre avec liseré violet.
+            - **Badges et capsules système** :
+              - Tous les badges (genres, statuts, non lus) arrondis façon capsules pilules douces (999dp).
 
             ### Fichiers :
             - **`yomu-arm64-v8a.apk`** : Recommandé pour Galaxy Z Fold (architecture 64-bit).
             - **`yomu-universal.apk`** : Compatible tous appareils Android.
-            - **`screenshot_home_closed.png` / `screenshot_home_unfolded.png`** : Aperçus réels générés par le CI.
+            - **`screenshot_home_closed.png` / `screenshot_home_unfolded.png`** : Aperçus réels capturés sur l'émulateur CI.
           files: |
             release-apks/yomu-arm64-v8a.apk
             release-apks/yomu-universal.apk

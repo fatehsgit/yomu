@@ -11,11 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import tachiyomi.presentation.core.components.material.SECONDARY_ALPHA
+import androidx.compose.ui.unit.sp
 import tachiyomi.presentation.core.components.material.padding
 
 @Composable
@@ -26,9 +27,16 @@ fun RowScope.StatsOverviewItem(
 ) {
     BaseStatsItem(
         title = title,
-        titleStyle = MaterialTheme.typography.titleLarge,
+        titleStyle = MaterialTheme.typography.headlineMedium.copy(
+            fontWeight = FontWeight.Black,
+            color = Color.White,
+            fontSize = 22.sp,
+        ),
         subtitle = subtitle,
-        subtitleStyle = MaterialTheme.typography.bodyMedium,
+        subtitleStyle = MaterialTheme.typography.bodySmall.copy(
+            color = Color(0xFF94A3B8),
+            fontSize = 11.sp,
+        ),
         icon = icon,
     )
 }
@@ -40,9 +48,15 @@ fun RowScope.StatsItem(
 ) {
     BaseStatsItem(
         title = title,
-        titleStyle = MaterialTheme.typography.bodyMedium,
+        titleStyle = MaterialTheme.typography.titleMedium.copy(
+            fontWeight = FontWeight.ExtraBold,
+            color = Color.White,
+        ),
         subtitle = subtitle,
-        subtitleStyle = MaterialTheme.typography.labelSmall,
+        subtitleStyle = MaterialTheme.typography.labelSmall.copy(
+            color = Color(0xFF94A3B8),
+            fontSize = 10.5.sp,
+        ),
     )
 }
 
@@ -63,18 +77,13 @@ private fun RowScope.BaseStatsItem(
     ) {
         Text(
             text = title,
-            style = titleStyle
-                .copy(fontWeight = FontWeight.Bold),
+            style = titleStyle,
             textAlign = TextAlign.Center,
             maxLines = 1,
         )
         Text(
             text = subtitle,
-            style = subtitleStyle
-                .copy(
-                    color = MaterialTheme.colorScheme.onSurface
-                        .copy(alpha = SECONDARY_ALPHA),
-                ),
+            style = subtitleStyle,
             textAlign = TextAlign.Center,
         )
         if (icon != null) {
@@ -82,7 +91,7 @@ private fun RowScope.BaseStatsItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = Color(0xFF8B5CF6),
             )
         }
     }

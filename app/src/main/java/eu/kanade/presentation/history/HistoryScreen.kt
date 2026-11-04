@@ -1,18 +1,34 @@
 package eu.kanade.presentation.history
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
@@ -30,12 +46,12 @@ import mihon.icons.materialsymbols.rounded.DeleteSweep
 import tachiyomi.domain.history.model.HistoryWithRelations
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.FastScrollLazyColumn
-import tachiyomi.presentation.core.components.ListGroupHeader
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
 import tachiyomi.presentation.core.util.collectAsState
+import tachiyomi.presentation.core.util.plus
 
 @Composable
 fun HistoryScreen(
@@ -116,7 +132,7 @@ private fun HistoryScreenContent(
     }
 
     FastScrollLazyColumn(
-        contentPadding = contentPadding,
+        contentPadding = contentPadding + PaddingValues(bottom = 96.dp),
     ) {
         items(
             items = history,
@@ -130,10 +146,36 @@ private fun HistoryScreenContent(
         ) { item ->
             when (item) {
                 is HistoryUiModel.Header -> {
-                    ListGroupHeader(
-                        modifier = Modifier.animateItem(),
-                        text = relativeDateText(item.date),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .animateItem()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(999.dp),
+                            color = Color(0x338B5CF6),
+                            border = BorderStroke(1.dp, Color(0xFF3B2D54)),
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFC084FC)),
+                                )
+                                Text(
+                                    text = relativeDateText(item.date),
+                                    color = Color(0xFFC084FC),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                )
+                            }
+                        }
+                    }
                 }
                 is HistoryUiModel.Item -> {
                     val value = item.item

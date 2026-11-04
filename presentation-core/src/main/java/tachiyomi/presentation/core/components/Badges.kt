@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.Placeholder
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BadgeGroup(
     modifier: Modifier = Modifier,
-    shape: Shape = MaterialTheme.shapes.extraSmall,
+    shape: Shape = RoundedCornerShape(999.dp),
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(modifier = modifier.clip(shape)) {
@@ -39,14 +40,14 @@ fun Badge(
     modifier: Modifier = Modifier,
     color: Color = Color(0xFF8B5CF6),
     textColor: Color = Color.White,
-    shape: Shape = RectangleShape,
+    shape: Shape = RoundedCornerShape(999.dp),
 ) {
     Text(
         text = text,
         modifier = modifier
             .clip(shape)
             .background(color)
-            .padding(horizontal = 5.dp, vertical = 2.dp),
+            .padding(horizontal = 7.dp, vertical = 2.dp),
         color = textColor,
         fontWeight = FontWeight.Bold,
         maxLines = 1,
@@ -60,7 +61,7 @@ fun Badge(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondary,
     iconColor: Color = MaterialTheme.colorScheme.onSecondary,
-    shape: Shape = RectangleShape,
+    shape: Shape = RoundedCornerShape(999.dp),
 ) {
     val iconContentPlaceholder = "[icon]"
     val text = buildAnnotatedString {

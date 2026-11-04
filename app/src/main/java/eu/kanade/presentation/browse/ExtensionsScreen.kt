@@ -1,6 +1,8 @@
 package eu.kanade.presentation.browse
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,13 +16,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,11 +35,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.resources.StringResource
@@ -155,7 +163,7 @@ private fun ExtensionContent(
     val installGranted = rememberRequestPackageInstallsPermissionState(initialValue = true)
 
     FastScrollLazyColumn(
-        contentPadding = contentPadding + topSmallPaddingValues,
+        contentPadding = contentPadding + topSmallPaddingValues + PaddingValues(bottom = 96.dp),
     ) {
         if (!installGranted && state.installer?.requiresSystemPermission == true) {
             item(key = "extension-permissions-warning") {
@@ -178,12 +186,18 @@ private fun ExtensionContent(
                         val action: @Composable RowScope.() -> Unit =
                             if (header.textRes == MR.strings.ext_updates_pending) {
                                 {
-                                    Button(onClick = { onClickUpdateAll() }) {
+                                    Button(
+                                        onClick = { onClickUpdateAll() },
+                                        shape = RoundedCornerShape(999.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color(0xFF8B5CF6),
+                                            contentColor = Color.White,
+                                        ),
+                                    ) {
                                         Text(
                                             text = stringResource(MR.strings.ext_update_all),
-                                            style = LocalTextStyle.current.copy(
-                                                color = MaterialTheme.colorScheme.onPrimary,
-                                            ),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 11.sp,
                                         )
                                     }
                                 }
@@ -339,13 +353,17 @@ private fun ExtensionItemContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(start = MaterialTheme.padding.medium),
+        modifier = modifier.padding(start = MaterialTheme.padding.small),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(
             text = extension.name,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+            ),
         )
 
         if (store != null) {
@@ -353,8 +371,10 @@ private fun ExtensionItemContent(
                 text = store.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color(0xFF94A3B8),
+                    fontSize = 11.sp,
+                ),
             )
         }
 
@@ -462,7 +482,7 @@ private fun ExtensionItemActions(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!installStep.isCompleted()) {
@@ -488,8 +508,16 @@ private fun ExtensionItemActions(
             }
         }
         secondaryAction?.let { (icon, label) ->
-            IconButton(onClick = { onClickItemSecondaryAction(extension) }) {
-                Icon(imageVector = icon, contentDescription = stringResource(label))
+            IconButton(
+                onClick = { onClickItemSecondaryAction(extension) },
+                modifier = Modifier.size(34.dp),
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = stringResource(label),
+                    tint = Color(0xFFC084FC),
+                    modifier = Modifier.size(18.dp),
+                )
             }
         }
 
@@ -502,8 +530,31 @@ private fun ExtensionItemActions(
             else -> null
         }
         action?.let { (icon, label) ->
-            IconButton(onClick = { onClickItemAction(extension) }) {
-                Icon(imageVector = icon, contentDescription = stringResource(label))
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = Color(0xFF8B5CF6),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(999.dp))
+                    .clickable { onClickItemAction(extension) },
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(14.dp),
+                    )
+                    Text(
+                        text = stringResource(label),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 11.sp,
+                    )
+                }
             }
         }
     }
@@ -529,16 +580,36 @@ private fun ExtensionHeader(
     action: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
-        modifier = modifier.padding(horizontal = MaterialTheme.padding.medium),
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(
-            text = text,
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .weight(1f),
-            style = MaterialTheme.typography.header,
-        )
+        Surface(
+            shape = RoundedCornerShape(999.dp),
+            color = Color(0x338B5CF6),
+            border = BorderStroke(1.dp, Color(0xFF3B2D54)),
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFC084FC)),
+                )
+                Text(
+                    text = text,
+                    color = Color(0xFFC084FC),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                )
+            }
+        }
         action()
     }
 }

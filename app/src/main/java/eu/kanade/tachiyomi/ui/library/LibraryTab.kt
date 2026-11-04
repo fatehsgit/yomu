@@ -54,6 +54,7 @@ import eu.kanade.presentation.library.DeleteLibraryMangaDialog
 import eu.kanade.presentation.library.LibrarySettingsDialog
 import eu.kanade.presentation.library.components.LibraryContent
 import eu.kanade.presentation.library.components.LibraryToolbar
+import eu.kanade.presentation.library.components.LibraryToolbarTitle
 import eu.kanade.presentation.library.components.YomuHomeHeader
 import eu.kanade.presentation.manga.components.LibraryBottomActionMenu
 import eu.kanade.presentation.more.onboarding.GETTING_STARTED_URL
@@ -133,39 +134,24 @@ data object LibraryTab : Tab {
         }
 
         Scaffold(
-            topBar = { scrollBehavior ->
-                val title = state.getToolbarTitle(
-                    defaultTitle = stringResource(MR.strings.label_library),
-                    defaultCategoryTitle = stringResource(MR.strings.label_default),
-                    page = state.coercedActiveCategoryIndex,
-                )
-                LibraryToolbar(
-                    hasActiveFilters = state.hasActiveFilters,
-                    selectedCount = state.selection.size,
-                    title = title,
-                    onClickUnselectAll = viewModel::clearSelection,
-                    onClickSelectAll = viewModel::selectAll,
-                    onClickInvertSelection = viewModel::invertSelection,
-                    onClickFilter = viewModel::showSettingsDialog,
-                    onClickRefresh = { scope.launch { onClickRefresh(state.activeCategory) } },
-                    onClickGlobalUpdate = { scope.launch { onClickRefresh(null) } },
-                    onClickOpenRandomManga = {
-                        scope.launch {
-                            val randomItem = viewModel.getRandomLibraryItemForCurrentCategory()
-                            if (randomItem != null) {
-                                navigator.push(MangaScreen(randomItem.libraryManga.manga.id))
-                            } else {
-                                snackbarHostState.showSnackbar(
-                                    context.stringResource(MR.strings.information_no_entries_found),
-                                )
-                            }
-                        }
-                    },
-                    searchQuery = state.searchQuery,
-                    onSearchQueryChange = viewModel::search,
-                    // For scroll overlay when no tab
-                    scrollBehavior = scrollBehavior.takeIf { !state.showCategoryTabs },
-                )
+            topBar = {
+                if (state.selectionMode) {
+                    LibraryToolbar(
+                        hasActiveFilters = state.hasActiveFilters,
+                        selectedCount = state.selection.size,
+                        title = LibraryToolbarTitle(""),
+                        onClickUnselectAll = viewModel::clearSelection,
+                        onClickSelectAll = viewModel::selectAll,
+                        onClickInvertSelection = viewModel::invertSelection,
+                        onClickFilter = viewModel::showSettingsDialog,
+                        onClickRefresh = { scope.launch { onClickRefresh(state.activeCategory) } },
+                        onClickGlobalUpdate = { scope.launch { onClickRefresh(null) } },
+                        onClickOpenRandomManga = {},
+                        searchQuery = null,
+                        onSearchQueryChange = {},
+                        scrollBehavior = null,
+                    )
+                }
             },
             bottomBar = {
                 LibraryBottomActionMenu(
@@ -222,6 +208,24 @@ data object LibraryTab : Tab {
                             },
                             onSearchClick = {
                                 navigator.push(GlobalSearchScreen(""))
+                            },
+                            searchQuery = state.searchQuery,
+                            onSearchQueryChange = viewModel::search,
+                            hasActiveFilters = state.hasActiveFilters,
+                            onClickFilter = viewModel::showSettingsDialog,
+                            onClickRefresh = { scope.launch { onClickRefresh(state.activeCategory) } },
+                            onClickGlobalUpdate = { scope.launch { onClickRefresh(null) } },
+                            onClickOpenRandomManga = {
+                                scope.launch {
+                                    val randomItem = viewModel.getRandomLibraryItemForCurrentCategory()
+                                    if (randomItem != null) {
+                                        navigator.push(MangaScreen(randomItem.libraryManga.manga.id))
+                                    } else {
+                                        snackbarHostState.showSnackbar(
+                                            context.stringResource(MR.strings.information_no_entries_found),
+                                        )
+                                    }
+                                }
                             },
                         )
 
@@ -330,6 +334,22 @@ data object LibraryTab : Tab {
                                 } else {
                                     context.startActivity(
                                         ReaderActivity.newIntent(context, history.mangaId, history.chapterId),
+                                    )
+                                }
+                            }
+                        },
+                        onSearchQueryChange = viewModel::search,
+                        onClickFilter = viewModel::showSettingsDialog,
+                        onClickRefreshCategory = { scope.launch { onClickRefresh(state.activeCategory) } },
+                        onClickGlobalUpdate = { scope.launch { onClickRefresh(null) } },
+                        onClickOpenRandomManga = {
+                            scope.launch {
+                                val randomItem = viewModel.getRandomLibraryItemForCurrentCategory()
+                                if (randomItem != null) {
+                                    navigator.push(MangaScreen(randomItem.libraryManga.manga.id))
+                                } else {
+                                    snackbarHostState.showSnackbar(
+                                        context.stringResource(MR.strings.information_no_entries_found),
                                     )
                                 }
                             }

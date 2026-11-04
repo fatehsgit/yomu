@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -173,6 +174,7 @@ private fun UpdatesAppBar(
 ) {
     AppBar(
         modifier = modifier,
+        backgroundColor = Color.Transparent,
         title = stringResource(MR.strings.label_recent_updates),
         actions = {
             AppBarActions(

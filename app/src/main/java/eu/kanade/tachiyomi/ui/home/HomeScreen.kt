@@ -231,7 +231,7 @@ object HomeScreen : Screen() {
         badgeProvider: @Composable (eu.kanade.presentation.util.Tab) -> (@Composable () -> Unit)?,
         modifier: Modifier = Modifier,
     ) {
-        val dockBgColor = Color(0x99120F24)
+        val dockBgColor = Color(0xE6100E1D)
         val dockBorderColor = Color(0x33C084FC)
         val primaryAccent = Color(0xFFC084FC)
         val unselectedColor = Color(0xFF94A3B8)
@@ -241,7 +241,7 @@ object HomeScreen : Screen() {
                 shape = RoundedCornerShape(32.dp),
                 color = dockBgColor,
                 border = BorderStroke(1.dp, dockBorderColor),
-                shadowElevation = 8.dp,
+                shadowElevation = 12.dp,
                 modifier = modifier
                     .navigationBarsPadding()
                     .padding(end = 16.dp)
@@ -251,7 +251,7 @@ object HomeScreen : Screen() {
                     modifier = Modifier
                         .width(76.dp)
                         .padding(vertical = 16.dp, horizontal = 6.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                    verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     tabs.fastForEach { tab ->
@@ -262,37 +262,45 @@ object HomeScreen : Screen() {
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(999.dp))
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = ripple(bounded = false, radius = 24.dp),
                                 ) { onTabSelected(tab) }
-                                .padding(vertical = 8.dp, horizontal = 4.dp),
+                                .padding(vertical = 4.dp),
                         ) {
-                            val badge = badgeProvider(tab)
-                            if (badge != null) {
-                                BadgedBox(badge = { badge() }) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(if (selected) Color(0x338B5CF6) else Color.Transparent)
+                                    .padding(horizontal = 14.dp, vertical = 4.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                val badge = badgeProvider(tab)
+                                if (badge != null) {
+                                    BadgedBox(badge = { badge() }) {
+                                        Icon(
+                                            painter = tab.options.icon!!,
+                                            contentDescription = tab.options.title,
+                                            tint = if (selected) primaryAccent else unselectedColor,
+                                            modifier = Modifier.size(22.dp),
+                                        )
+                                    }
+                                } else {
                                     Icon(
                                         painter = tab.options.icon!!,
                                         contentDescription = tab.options.title,
                                         tint = if (selected) primaryAccent else unselectedColor,
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier.size(22.dp),
                                     )
                                 }
-                            } else {
-                                Icon(
-                                    painter = tab.options.icon!!,
-                                    contentDescription = tab.options.title,
-                                    tint = if (selected) primaryAccent else unselectedColor,
-                                    modifier = Modifier.size(24.dp),
-                                )
                             }
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
 
                             Text(
                                 text = tab.options.title,
-                                color = if (selected) primaryAccent else unselectedColor,
+                                color = if (selected) Color.White else unselectedColor,
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                                     fontSize = 10.sp,
@@ -309,7 +317,7 @@ object HomeScreen : Screen() {
                 shape = RoundedCornerShape(32.dp),
                 color = dockBgColor,
                 border = BorderStroke(1.dp, dockBorderColor),
-                shadowElevation = 8.dp,
+                shadowElevation = 12.dp,
                 modifier = modifier
                     .navigationBarsPadding()
                     .padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
@@ -320,7 +328,7 @@ object HomeScreen : Screen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(64.dp)
-                        .padding(horizontal = 8.dp),
+                        .padding(horizontal = 6.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -332,40 +340,48 @@ object HomeScreen : Screen() {
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .weight(1f)
-                                .clip(RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(999.dp))
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = ripple(bounded = false, radius = 24.dp),
                                 ) { onTabSelected(tab) }
-                                .padding(vertical = 6.dp),
+                                .padding(vertical = 4.dp),
                         ) {
-                            val badge = badgeProvider(tab)
-                            if (badge != null) {
-                                BadgedBox(badge = { badge() }) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(if (selected) Color(0x338B5CF6) else Color.Transparent)
+                                    .padding(horizontal = 14.dp, vertical = 3.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                val badge = badgeProvider(tab)
+                                if (badge != null) {
+                                    BadgedBox(badge = { badge() }) {
+                                        Icon(
+                                            painter = tab.options.icon!!,
+                                            contentDescription = tab.options.title,
+                                            tint = if (selected) primaryAccent else unselectedColor,
+                                            modifier = Modifier.size(22.dp),
+                                        )
+                                    }
+                                } else {
                                     Icon(
                                         painter = tab.options.icon!!,
                                         contentDescription = tab.options.title,
                                         tint = if (selected) primaryAccent else unselectedColor,
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier.size(22.dp),
                                     )
                                 }
-                            } else {
-                                Icon(
-                                    painter = tab.options.icon!!,
-                                    contentDescription = tab.options.title,
-                                    tint = if (selected) primaryAccent else unselectedColor,
-                                    modifier = Modifier.size(24.dp),
-                                )
                             }
 
                             Spacer(modifier = Modifier.height(2.dp))
 
                             Text(
                                 text = tab.options.title,
-                                color = if (selected) primaryAccent else unselectedColor,
+                                color = if (selected) Color.White else unselectedColor,
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                                    fontSize = 10.5.sp,
+                                    fontSize = 10.sp,
                                 ),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
