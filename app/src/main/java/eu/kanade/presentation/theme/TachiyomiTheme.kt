@@ -55,14 +55,15 @@ private fun BaseTachiyomiTheme(
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    // Forçage Yomu : toujours sombre, palette Dark Violet (#08090E & #8B5CF6)
+    val isDark = true
     MaterialExpressiveTheme(
-        colorScheme = remember(appTheme, isDark, isAmoled) {
+        colorScheme = remember(appTheme) {
             getThemeColorScheme(
                 context = context,
-                appTheme = appTheme,
-                isDark = isDark,
-                isAmoled = isAmoled,
+                appTheme = AppTheme.DEFAULT,
+                isDark = true,
+                isAmoled = false,
             )
         },
         content = content,

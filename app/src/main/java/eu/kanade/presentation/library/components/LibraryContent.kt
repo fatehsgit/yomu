@@ -20,6 +20,7 @@ import eu.kanade.tachiyomi.ui.library.LibraryItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tachiyomi.domain.category.model.Category
+import tachiyomi.domain.history.model.HistoryWithRelations
 import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.presentation.core.components.material.PullRefresh
@@ -45,6 +46,8 @@ fun LibraryContent(
     getDisplayMode: (Int) -> PreferenceMutableState<LibraryDisplayMode>,
     getColumnsForOrientation: (Boolean) -> PreferenceMutableState<Int>,
     getItemsForCategory: (Category) -> List<LibraryItem>,
+    lastReadItem: HistoryWithRelations? = null,
+    onContinueReadingHistory: ((HistoryWithRelations) -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier.padding(
@@ -53,6 +56,13 @@ fun LibraryContent(
             end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
         ),
     ) {
+        if (searchQuery.isNullOrEmpty() && selection.isEmpty() && onContinueReadingHistory != null) {
+            YomuHomeHeader(
+                lastRead = lastReadItem,
+                onContinueReading = onContinueReadingHistory,
+            )
+        }
+
         val pagerState = rememberPagerState(currentPage) { categories.size }
 
         val scope = rememberCoroutineScope()

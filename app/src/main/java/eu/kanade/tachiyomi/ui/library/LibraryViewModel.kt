@@ -60,7 +60,9 @@ import tachiyomi.domain.category.model.Category
 import tachiyomi.domain.chapter.interactor.GetBookmarkedChaptersByMangaId
 import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
 import tachiyomi.domain.chapter.model.Chapter
+import tachiyomi.domain.history.interactor.GetHistory
 import tachiyomi.domain.history.interactor.GetNextChapters
+import tachiyomi.domain.history.model.HistoryWithRelations
 import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
@@ -98,9 +100,16 @@ class LibraryViewModel(
     private val downloadManager: DownloadManager,
     private val downloadCache: DownloadCache,
     private val trackerManager: TrackerManager,
+    private val getHistory: GetHistory,
 ) : ViewModel() {
 
     private val subscriberGate = SubscriberGate()
+
+    val lastReadItem: StateFlow<HistoryWithRelations?> = getHistory.subscribe("")
+        .map { it.firstOrNull() }
+        .distinctUntilChanged()
+        .flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope + subscriberGate, SharingStarted.Eagerly, null)
 
     private val searchQuery = MutableStateFlow<String?>(null)
 
@@ -491,6 +500,10 @@ class LibraryViewModel(
     suspend fun getNextUnreadChapter(manga: Manga): Chapter? {
         val chapters = getChaptersByMangaId.await(manga.id, applyScanlatorFilter = true)
         return withContext(Dispatchers.Default) { chapters.getNextUnread(manga, downloadManager) }
+    }
+
+    suspend fun getNextChapterForHistory(history: HistoryWithRelations): Chapter? {
+        return getNextChapters.await(history.mangaId, history.chapterId, onlyUnread = false).firstOrNull()
     }
 
     /**

@@ -57,24 +57,21 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.4-yomu
-          name: "Yomu v0.21.4 (Design Sombre Violet OLED & Z Fold)"
+          tag_name: v0.21.5-yomu
+          name: "Yomu v0.21.5 (En-tête Fateh & Hero Card Reprendre)"
           body: |
-            ## Yomu v0.21.4 — Design Sombre Violet OLED & Galaxy Z Fold
+            ## Yomu v0.21.5 — En-tête personnalisé Fateh & Hero Card de lecture
 
             ### Nouveautés de cette version :
-            - **Nouveau Thème Visuel Natif (Palette Maquette)** :
-              - Fond sombre OLED profond (`#08090E`) et surfaces nuit (`#0F111A`)
-              - Accents violet électrique (`#8B5CF6` / `#A78BFA`) pour les sélections, badges et boutons
-              - Cartes de manga stylisées (`#141624`) avec coins arrondis modernes (12 dp / 16 dp)
-              - Badges de chapitres non lus violet et téléchargements émeraude (`#34D399`)
-              - Thème sombre et palette Yomu actifs par défaut sur tous les appareils, y compris Android 17 / One UI 9 (sans écrasement par Monet).
-            - **Optimisation pliable Galaxy Z Fold (Seuil 550 dp)** :
-              - Écran intérieur déplié (576–588 dp) : bascule automatique en mode tablette avec Navigation Rail sur le côté droit sous le pouce.
-              - Écran externe fermé : navigation compacte en bas.
-            - **Catalogue Keiyoushi & Sources intégrées** :
-              - Sources manga directement opérationnelles dans l'onglet Explorer.
-            - **Mise à niveau directe** : Version 0.21.4 (code 40) permettant la mise à jour directe par-dessus l'APK précédente.
+            - **En-tête personnalisé Fateh ✦** :
+              - Salutation dynamique (« Bonjour » / « Good evening ») selon l'heure.
+              - Titre « Fateh ✦ » et avatar avec anneau dégradé violet/indigo.
+            - **Hero Card « Reprendre la lecture »** :
+              - Affiche le dernier manga lu avec couverture 2:3, titre, numéro de chapitre et badge pulsé.
+              - Bouton pilule violet « Reprendre » ouvrant directement le lecteur.
+            - **Thème Sombre OLED forcé** :
+              - Verrouillage du thème sombre Dark Violet (#08090E & #8B5CF6) même en mode jour système.
+            - **Mise à niveau directe** : Version 0.21.5 (code 41) permettant la mise à jour directe par-dessus l'APK précédente.
 
             ### Téléchargement :
             - **`yomu-arm64-v8a.apk`** : Pour Galaxy Z Fold (architecture 64-bit).
