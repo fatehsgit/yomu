@@ -88,8 +88,15 @@ private fun ColumnScope.FilterPage(
         } else {
             filterDownloaded
         },
-        enabled = !downloadedOnly,
-        onClick = { viewModel.toggleFilter(LibraryPreferences::filterDownloaded) },
+        enabled = true,
+        onClick = {
+            if (downloadedOnly) {
+                viewModel.preferences.downloadedOnly.set(false)
+                viewModel.libraryPreferences.filterDownloaded.set(TriState.DISABLED)
+            } else {
+                viewModel.toggleFilter(LibraryPreferences::filterDownloaded)
+            }
+        },
     )
     val filterUnread by viewModel.libraryPreferences.filterUnread.collectAsState()
     TriStateItem(

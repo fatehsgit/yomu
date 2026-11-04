@@ -94,26 +94,22 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.7-yomu
-          name: "Yomu v0.21.7 (Dock Flottant en Capsule & Support Z Fold)"
+          tag_name: v0.21.8-yomu
+          name: "Yomu v0.21.8 (Dock Glossy Translucide, Déblocage Captures & Filtre Bibliothèque)"
           body: |
-            ## Yomu v0.21.7 — Vrai Dock Flottant en Capsule & Support Galaxy Z Fold
+            ## Yomu v0.21.8 — Dock Glossy Translucide, Déblocage Captures & Filtre Bibliothèque
 
             ### Nouveautés de cette version :
-            - **Vrai Dock Flottant en Capsule (`YomuFloatingDock`)** :
-              - Remplacement de la barre Android standard (`NavigationSuiteScaffold`) par une véritable capsule flottante en verre semi-transparent (`#EE161426`).
-              - Bords décollés de l'écran avec marges élégantes (20 dp latérales, 12 dp au-dessus de la barre de gestes).
-              - Coins ultra-arrondis (`RoundedCornerShape(32.dp)`), liseré violet subtil (`#33A78BFA`) et ombre portée.
-              - Pastilles épurées sans la grosse pilule Material 3 standard : icônes et typographie violettes lumineuses (`#A78BFA`) sur fond doux violet translucide.
-            - **Dock Latéral Droit Centré sur Galaxy Z Fold déplié** :
-              - En mode tablette / Fold déplié, le dock s'affiche sous forme de capsule verticale élégante, centrée à droite de l'écran.
+            - **Dock Glossy Translucide & Design Épuré** :
+              - Verre fumé sombre translucide (`#99120F24` / 60% d'opacité) avec liseré violet élégant façon verre poli (*frosted glass*).
+              - Suppression intégrale de la surbrillance rectangulaire terne : l'onglet sélectionné s'illumine en violet éclatant (`#C084FC`) avec ripple subtil au toucher.
+            - **Déblocage complet des captures d'écran** :
+              - Neutralisation totale du `FLAG_SECURE` Android : captures d'écran et enregistrements autorisés partout dans l'application.
+            - **Déverrouillage du filtre « Téléchargé uniquement »** :
+              - Réinitialisation automatique au lancement pour restaurer immédiatement l'accès à tous les mangas de la bibliothèque (en ligne et hors ligne).
+              - Déverrouillage du filtre dans la boîte de dialogue de tri/filtre pour garder la main et désactiver le mode téléchargé en un clic.
             - **Signature permanente (Keystore fixe)** :
               - Clé cryptographique officielle Yomu conservée (mise à jour directe sans désinstallation préalable requise).
-            - **Écran d'accueil Yomu toujours visible** :
-              - Salutation dynamique (« Bonjour » / « Good evening, Fateh ✦ »).
-              - Hero Card Découverte & Reprise de lecture.
-            - **Captures d'écran réelles du CI** :
-              - Captures d'écran générées sur émulateur Android (modes replié et déplié) incluses dans la release.
 
             ### Fichiers :
             - **`yomu-arm64-v8a.apk`** : Recommandé pour Galaxy Z Fold (architecture 64-bit).

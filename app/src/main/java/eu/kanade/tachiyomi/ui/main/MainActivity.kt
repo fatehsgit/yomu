@@ -120,6 +120,7 @@ import mihon.icons.materialsymbols.MaterialSymbols
 import mihon.icons.materialsymbols.automirroredrounded.OpenInNew
 import mihon.icons.materialsymbols.roundedfilled.VolunteerActivism
 import tachiyomi.core.common.Constants
+import tachiyomi.core.common.preference.TriState
 import tachiyomi.core.common.util.system.logcat
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.release.interactor.GetApplicationRelease
@@ -173,6 +174,10 @@ class MainActivity : BaseActivity() {
         val splashScreen = if (isLaunch) installSplashScreen() else null
 
         super.onCreate(savedInstanceState)
+
+        // Reset downloadedOnly and library filter so library displays all online/offline manga
+        preferences.downloadedOnly.set(false)
+        libraryPreferences.filterDownloaded.set(TriState.DISABLED)
 
         lifecycleScope.launch {
             Migrator.awaitAndRelease()

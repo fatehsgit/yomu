@@ -231,9 +231,9 @@ object HomeScreen : Screen() {
         badgeProvider: @Composable (eu.kanade.presentation.util.Tab) -> (@Composable () -> Unit)?,
         modifier: Modifier = Modifier,
     ) {
-        val dockBgColor = Color(0xEE161426)
-        val dockBorderColor = Color(0x33A78BFA)
-        val primaryAccent = Color(0xFFA78BFA)
+        val dockBgColor = Color(0x99120F24)
+        val dockBorderColor = Color(0x33C084FC)
+        val primaryAccent = Color(0xFFC084FC)
         val unselectedColor = Color(0xFF94A3B8)
 
         if (isTablet) {
@@ -241,7 +241,7 @@ object HomeScreen : Screen() {
                 shape = RoundedCornerShape(32.dp),
                 color = dockBgColor,
                 border = BorderStroke(1.dp, dockBorderColor),
-                shadowElevation = 16.dp,
+                shadowElevation = 8.dp,
                 modifier = modifier
                     .navigationBarsPadding()
                     .padding(end = 16.dp)
@@ -256,7 +256,6 @@ object HomeScreen : Screen() {
                 ) {
                     tabs.fastForEach { tab ->
                         val selected = currentTab::class == tab::class
-                        val activeBgColor = if (selected) Color(0x26A78BFA) else Color.Transparent
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -264,10 +263,9 @@ object HomeScreen : Screen() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(activeBgColor)
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
-                                    indication = ripple(bounded = false, radius = 28.dp),
+                                    indication = ripple(bounded = false, radius = 24.dp),
                                 ) { onTabSelected(tab) }
                                 .padding(vertical = 8.dp, horizontal = 4.dp),
                         ) {
@@ -311,7 +309,7 @@ object HomeScreen : Screen() {
                 shape = RoundedCornerShape(32.dp),
                 color = dockBgColor,
                 border = BorderStroke(1.dp, dockBorderColor),
-                shadowElevation = 16.dp,
+                shadowElevation = 8.dp,
                 modifier = modifier
                     .navigationBarsPadding()
                     .padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
@@ -328,7 +326,6 @@ object HomeScreen : Screen() {
                 ) {
                     tabs.fastForEach { tab ->
                         val selected = currentTab::class == tab::class
-                        val activeBgColor = if (selected) Color(0x26A78BFA) else Color.Transparent
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -336,10 +333,9 @@ object HomeScreen : Screen() {
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(activeBgColor)
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
-                                    indication = ripple(bounded = false, radius = 28.dp),
+                                    indication = ripple(bounded = false, radius = 24.dp),
                                 ) { onTabSelected(tab) }
                                 .padding(vertical = 6.dp),
                         ) {
