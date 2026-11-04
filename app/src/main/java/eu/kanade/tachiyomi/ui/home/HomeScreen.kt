@@ -2,34 +2,62 @@ package eu.kanade.tachiyomi.ui.home
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
-import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -85,44 +113,33 @@ object HomeScreen : Screen() {
             // Provide usable navigator to content screen
             CompositionLocalProvider(LocalNavigator provides navigator) {
                 val tabletUi = isTabletUi()
-                val navigationSuiteType = if (tabletUi) {
-                    NavigationSuiteType.NavigationRail
-                } else {
-                    NavigationSuiteType.NavigationBar
-                }
-                val navigationSuiteState = rememberNavigationSuiteScaffoldState()
-                LaunchedEffect(navigationSuiteState, tabletUi) {
-                    if (tabletUi) navigationSuiteState.show()
+                var isDockVisible by remember { mutableStateOf(true) }
+                val scope = rememberCoroutineScope()
+
+                LaunchedEffect(tabletUi) {
+                    if (tabletUi) isDockVisible = true
                     showBottomNavEvent.receiveAsFlow().collectLatest { show ->
-                        if (tabletUi || show) {
-                            navigationSuiteState.show()
-                        } else {
-                            navigationSuiteState.hide()
-                        }
+                        isDockVisible = if (tabletUi) true else show
                     }
                 }
 
-                val isFoldUnfolded = tabletUi
-                CompositionLocalProvider(
-                    LocalLayoutDirection provides if (isFoldUnfolded) LayoutDirection.Rtl else LayoutDirection.Ltr,
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF0F111A)),
                 ) {
-                    NavigationSuiteScaffold(
-                        navigationSuiteType = navigationSuiteType,
-                        state = navigationSuiteState,
-                        navigationSuiteColors = NavigationSuiteDefaults.colors(
-                            navigationBarContainerColor = Color(0xFF0F111A),
-                            navigationRailContainerColor = Color(0xFF0F111A),
-                            navigationBarContentColor = Color.White,
-                            navigationRailContentColor = Color.White,
-                        ),
-                        navigationItemVerticalArrangement = Arrangement.Center,
-                        navigationItems = {
-                            TABS.fastForEach { NavigationSuiteItem(it, navigationSuiteType) }
-                        },
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(
+                                if (tabletUi) {
+                                    Modifier.padding(end = if (isDockVisible) 84.dp else 0.dp)
+                                } else {
+                                    Modifier.padding(bottom = if (isDockVisible) 76.dp else 0.dp)
+                                }
+                            ),
                     ) {
-                        CompositionLocalProvider(
-                            LocalLayoutDirection provides LayoutDirection.Ltr,
-                        ) {
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             AnimatedContent(
                                 targetState = tabNavigator.current,
                                 transitionSpec = {
@@ -138,6 +155,31 @@ object HomeScreen : Screen() {
                                 }
                             }
                         }
+                    }
+
+                    AnimatedVisibility(
+                        visible = isDockVisible,
+                        enter = fadeIn() + if (tabletUi) slideInHorizontally { it } else slideInVertically { it },
+                        exit = fadeOut() + if (tabletUi) slideOutHorizontally { it } else slideOutVertically { it },
+                        modifier = if (tabletUi) {
+                            Modifier.align(Alignment.CenterEnd)
+                        } else {
+                            Modifier.align(Alignment.BottomCenter)
+                        },
+                    ) {
+                        YomuFloatingDock(
+                            tabs = TABS,
+                            currentTab = tabNavigator.current,
+                            isTablet = tabletUi,
+                            onTabSelected = { tab ->
+                                if (tabNavigator.current::class != tab::class) {
+                                    tabNavigator.current = tab
+                                } else {
+                                    scope.launch { tab.onReselect(navigator) }
+                                }
+                            },
+                            badgeProvider = { tab -> tabBadge(tab) },
+                        )
                     }
                 }
             }
@@ -181,43 +223,161 @@ object HomeScreen : Screen() {
     }
 
     @Composable
-    private fun NavigationSuiteItem(
-        tab: eu.kanade.presentation.util.Tab,
-        navigationSuiteType: NavigationSuiteType,
+    private fun YomuFloatingDock(
+        tabs: List<eu.kanade.presentation.util.Tab>,
+        currentTab: eu.kanade.presentation.util.Tab,
+        isTablet: Boolean,
+        onTabSelected: (eu.kanade.presentation.util.Tab) -> Unit,
+        badgeProvider: @Composable (eu.kanade.presentation.util.Tab) -> (@Composable () -> Unit)?,
+        modifier: Modifier = Modifier,
     ) {
-        val tabNavigator = LocalTabNavigator.current
-        val navigator = LocalNavigator.currentOrThrow
-        val scope = rememberCoroutineScope()
-        val selected = tabNavigator.current::class == tab::class
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-            NavigationSuiteItem(
-                navigationSuiteType = navigationSuiteType,
-                selected = selected,
-                onClick = {
-                    if (!selected) {
-                        tabNavigator.current = tab
-                    } else {
-                        scope.launch { tab.onReselect(navigator) }
+        val dockBgColor = Color(0xEE161426)
+        val dockBorderColor = Color(0x33A78BFA)
+        val primaryAccent = Color(0xFFA78BFA)
+        val unselectedColor = Color(0xFF94A3B8)
+
+        if (isTablet) {
+            Surface(
+                shape = RoundedCornerShape(32.dp),
+                color = dockBgColor,
+                border = BorderStroke(1.dp, dockBorderColor),
+                shadowElevation = 16.dp,
+                modifier = modifier
+                    .navigationBarsPadding()
+                    .padding(end = 16.dp)
+                    .wrapContentHeight(),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(76.dp)
+                        .padding(vertical = 16.dp, horizontal = 6.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    tabs.fastForEach { tab ->
+                        val selected = currentTab::class == tab::class
+                        val activeBgColor = if (selected) Color(0x26A78BFA) else Color.Transparent
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(activeBgColor)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = ripple(bounded = false, radius = 28.dp),
+                                ) { onTabSelected(tab) }
+                                .padding(vertical = 8.dp, horizontal = 4.dp),
+                        ) {
+                            val badge = badgeProvider(tab)
+                            if (badge != null) {
+                                BadgedBox(badge = { badge() }) {
+                                    Icon(
+                                        painter = tab.options.icon!!,
+                                        contentDescription = tab.options.title,
+                                        tint = if (selected) primaryAccent else unselectedColor,
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                }
+                            } else {
+                                Icon(
+                                    painter = tab.options.icon!!,
+                                    contentDescription = tab.options.title,
+                                    tint = if (selected) primaryAccent else unselectedColor,
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Text(
+                                text = tab.options.title,
+                                color = if (selected) primaryAccent else unselectedColor,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                    fontSize = 10.sp,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
-                },
-                icon = {
-                    Icon(
-                        painter = tab.options.icon!!,
-                        contentDescription = tab.options.title,
-                    )
-                },
-                label = {
-                    Text(
-                        text = tab.options.title,
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                badge = tabBadge(tab),
-            )
+                }
+            }
+        } else {
+            Surface(
+                shape = RoundedCornerShape(32.dp),
+                color = dockBgColor,
+                border = BorderStroke(1.dp, dockBorderColor),
+                shadowElevation = 16.dp,
+                modifier = modifier
+                    .navigationBarsPadding()
+                    .padding(horizontal = 20.dp, bottom = 12.dp)
+                    .widthIn(max = 440.dp)
+                    .fillMaxWidth(),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    tabs.fastForEach { tab ->
+                        val selected = currentTab::class == tab::class
+                        val activeBgColor = if (selected) Color(0x26A78BFA) else Color.Transparent
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(activeBgColor)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = ripple(bounded = false, radius = 28.dp),
+                                ) { onTabSelected(tab) }
+                                .padding(vertical = 6.dp),
+                        ) {
+                            val badge = badgeProvider(tab)
+                            if (badge != null) {
+                                BadgedBox(badge = { badge() }) {
+                                    Icon(
+                                        painter = tab.options.icon!!,
+                                        contentDescription = tab.options.title,
+                                        tint = if (selected) primaryAccent else unselectedColor,
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                }
+                            } else {
+                                Icon(
+                                    painter = tab.options.icon!!,
+                                    contentDescription = tab.options.title,
+                                    tint = if (selected) primaryAccent else unselectedColor,
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(2.dp))
+
+                            Text(
+                                text = tab.options.title,
+                                color = if (selected) primaryAccent else unselectedColor,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                    fontSize = 10.5.sp,
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -247,7 +407,10 @@ object HomeScreen : Screen() {
         }
         if (count <= 0) return null
         return {
-            Badge {
+            Badge(
+                containerColor = Color(0xFFA855F7),
+                contentColor = Color.White,
+            ) {
                 val desc = when (tab) {
                     is UpdatesTab -> pluralStringResource(
                         MR.plurals.notification_chapters_generic,

@@ -86,7 +86,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: yomu-v0.21.6-release
+          name: yomu-v0.21.7-release
           path: |
             release-apks/*.apk
             release-apks/*.png
@@ -94,28 +94,29 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.6-yomu
-          name: "Yomu v0.21.6 (Signature permanente, Accueil Découverte & Dock)"
+          tag_name: v0.21.7-yomu
+          name: "Yomu v0.21.7 (Dock Flottant en Capsule & Support Z Fold)"
           body: |
-            ## Yomu v0.21.6 — Signature permanente, Accueil Yomu garanti & Dock Violet
+            ## Yomu v0.21.7 — Vrai Dock Flottant en Capsule & Support Galaxy Z Fold
 
             ### Nouveautés de cette version :
+            - **Vrai Dock Flottant en Capsule (`YomuFloatingDock`)** :
+              - Remplacement de la barre Android standard (`NavigationSuiteScaffold`) par une véritable capsule flottante en verre semi-transparent (`#EE161426`).
+              - Bords décollés de l'écran avec marges élégantes (20 dp latérales, 12 dp au-dessus de la barre de gestes).
+              - Coins ultra-arrondis (`RoundedCornerShape(32.dp)`), liseré violet subtil (`#33A78BFA`) et ombre portée.
+              - Pastilles épurées sans la grosse pilule Material 3 standard : icônes et typographie violettes lumineuses (`#A78BFA`) sur fond doux violet translucide.
+            - **Dock Latéral Droit Centré sur Galaxy Z Fold déplié** :
+              - En mode tablette / Fold déplié, le dock s'affiche sous forme de capsule verticale élégante, centrée à droite de l'écran.
             - **Signature permanente (Keystore fixe)** :
-              - Clé cryptographique officielle Yomu intégrée au projet (valide jusqu'en 2054).
-              - **Plus besoin de désinstaller l'application** : toutes les futures versions se mettront à jour directement sans conflit de signature !
+              - Clé cryptographique officielle Yomu conservée (mise à jour directe sans désinstallation préalable requise).
             - **Écran d'accueil Yomu toujours visible** :
-              - Salutation dynamique (« Bonjour » / « Good evening, Fateh ✦ ») avec avatar violet/indigo.
-              - **Hero Card Découverte** au premier lancement : accès direct au catalogue Keiyoushi et à la recherche globale.
-              - **Hero Card Reprendre** dès qu'un manga est lu : reprise directe en un clic avec pochette 2:3 et badge pulsé.
-              - Suppression du sas de bienvenue Mihon : l'accueil Yomu s'affiche immédiatement à l'ouverture.
-            - **Dock de navigation violet Dark Violet** :
-              - Barre inférieure et latérale stylisée Dark Violet (#0F111A) avec pastilles de sélection violettes (#3B1A78 / #A78BFA).
-              - Position latérale droite et centrée en mode Galaxy Z Fold déplié.
-            - **Tests et captures d'écran automatisés** :
-              - Démarrage sous émulateur Android dans GitHub Actions avec captures d'écran réelles d'accueil jointes à la release.
+              - Salutation dynamique (« Bonjour » / « Good evening, Fateh ✦ »).
+              - Hero Card Découverte & Reprise de lecture.
+            - **Captures d'écran réelles du CI** :
+              - Captures d'écran générées sur émulateur Android (modes replié et déplié) incluses dans la release.
 
             ### Fichiers :
-            - **`yomu-arm64-v8a.apk`** : Pour Galaxy Z Fold (architecture 64-bit).
+            - **`yomu-arm64-v8a.apk`** : Recommandé pour Galaxy Z Fold (architecture 64-bit).
             - **`yomu-universal.apk`** : Compatible tous appareils Android.
             - **`screenshot_home_closed.png` / `screenshot_home_unfolded.png`** : Aperçus réels générés par le CI.
           files: |
