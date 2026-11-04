@@ -37,8 +37,8 @@ android {
     defaultConfig {
         applicationId = "app.yomu.reader"
 
-        versionCode = 41
-        versionName = "0.21.5"
+        versionCode = 42
+        versionName = "0.21.6"
 
         buildConfigField("boolean", "TELEMETRY_INCLUDED", "${Config.includeTelemetry}")
         buildConfigField("boolean", "UPDATER_ENABLED", "${Config.enableUpdater}")
@@ -46,20 +46,21 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    if (System.getenv("MIHON_GITHUB_RELEASE").toBoolean()) {
-        signingConfigs {
-            named("debug") {
+    val yomuKeystoreFile = rootProject.file("yomu.keystore")
+    signingConfigs {
+        named("debug") {
+            if (yomuKeystoreFile.exists()) {
+                storeFile = yomuKeystoreFile
+                storePassword = "yomupassword"
+                keyAlias = "yomu"
+                keyPassword = "yomupassword"
+            } else if (System.getenv("MIHON_GITHUB_RELEASE").toBoolean()) {
                 storeFile = file(System.getenv("storeFile"))
                 storePassword = System.getenv("storePassword")
                 keyAlias = System.getenv("keyAlias")
                 keyPassword = System.getenv("keyPassword")
-            }
-        }
-    } else if (keystorePropertiesFile.exists()) {
-        val keystoreProperties = FileInputStream(keystorePropertiesFile).use { Properties().apply { load(it) } }
-
-        signingConfigs {
-            named("debug") {
+            } else if (keystorePropertiesFile.exists()) {
+                val keystoreProperties = FileInputStream(keystorePropertiesFile).use { Properties().apply { load(it) } }
                 storeFile = file(keystoreProperties.getProperty("storeFile"))
                 storePassword = keystoreProperties.getProperty("storePassword")
                 keyAlias = keystoreProperties.getProperty("keyAlias")

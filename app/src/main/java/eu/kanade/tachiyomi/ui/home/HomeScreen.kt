@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
@@ -21,11 +23,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
@@ -108,8 +112,10 @@ object HomeScreen : Screen() {
                         navigationSuiteType = navigationSuiteType,
                         state = navigationSuiteState,
                         navigationSuiteColors = NavigationSuiteDefaults.colors(
-                            navigationRailContainerColor = MaterialTheme.colorScheme
-                                .surfaceColorAtElevation(3.dp),
+                            navigationBarContainerColor = Color(0xFF0F111A),
+                            navigationRailContainerColor = Color(0xFF0F111A),
+                            navigationBarContentColor = Color.White,
+                            navigationRailContentColor = Color.White,
                         ),
                         navigationItemVerticalArrangement = Arrangement.Center,
                         navigationItems = {
@@ -205,12 +211,30 @@ object HomeScreen : Screen() {
                 label = {
                     Text(
                         text = tab.options.title,
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                        ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
                 badge = tabBadge(tab),
+                colors = NavigationSuiteDefaults.itemColors(
+                    navigationBarItemColors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color(0xFFA78BFA),
+                        selectedTextColor = Color.White,
+                        indicatorColor = Color(0xFF3B1A78),
+                        unselectedIconColor = Color(0xFF94A3B8),
+                        unselectedTextColor = Color(0xFF94A3B8),
+                    ),
+                    navigationRailItemColors = NavigationRailItemDefaults.colors(
+                        selectedIconColor = Color(0xFFA78BFA),
+                        selectedTextColor = Color.White,
+                        indicatorColor = Color(0xFF3B1A78),
+                        unselectedIconColor = Color(0xFF94A3B8),
+                        unselectedTextColor = Color(0xFF94A3B8),
+                    ),
+                ),
             )
         }
     }

@@ -45,41 +45,84 @@ jobs:
           if [ -f app/build/outputs/apk/release/app-universal-release.apk ]; then
             cp app/build/outputs/apk/release/app-universal-release.apk release-apks/yomu-universal.apk
           fi
+          if [ -f app/build/outputs/apk/release/app-x86_64-release.apk ]; then
+            cp app/build/outputs/apk/release/app-x86_64-release.apk release-apks/yomu-x86_64.apk
+          fi
           cp app/build/outputs/apk/release/*.apk release-apks/ || true
           ls -la release-apks/
 
-      - name: Upload APK Artifacts
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules || true
+          sudo udevadm control --reload-rules || true
+          sudo udevadm trigger --name-match=kvm || true
+
+      - name: Run Android Emulator & Capture UI Screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        continue-on-error: true
+        with:
+          api-level: 30
+          target: default
+          arch: x86_64
+          profile: pixel_5
+          disable-animations: true
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            echo "Installing Yomu APK..."
+            adb install -r release-apks/yomu-x86_64.apk || adb install -r release-apks/app-x86_64-release.apk
+            echo "Launching Yomu MainActivity..."
+            adb shell am start -n app.yomu.reader/eu.kanade.tachiyomi.ui.main.MainActivity
+            sleep 8
+            echo "Capturing Phone (folded) screenshot..."
+            adb exec-out screencap -p > release-apks/screenshot_home_closed.png
+            echo "Switching to Galaxy Z Fold unfolded resolution (1812x2176, 420dpi)..."
+            adb shell wm size 1812x2176
+            adb shell wm density 420
+            sleep 4
+            echo "Capturing Galaxy Z Fold (unfolded) screenshot..."
+            adb exec-out screencap -p > release-apks/screenshot_home_unfolded.png
+            ls -lh release-apks/*.png
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: yomu-apks
-          path: release-apks/
+          name: yomu-v0.21.6-release
+          path: |
+            release-apks/*.apk
+            release-apks/*.png
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.5-yomu
-          name: "Yomu v0.21.5 (En-tête Fateh & Hero Card Reprendre)"
+          tag_name: v0.21.6-yomu
+          name: "Yomu v0.21.6 (Signature permanente, Accueil Découverte & Dock)"
           body: |
-            ## Yomu v0.21.5 — En-tête personnalisé Fateh & Hero Card de lecture
+            ## Yomu v0.21.6 — Signature permanente, Accueil Yomu garanti & Dock Violet
 
             ### Nouveautés de cette version :
-            - **En-tête personnalisé Fateh ✦** :
-              - Salutation dynamique (« Bonjour » / « Good evening ») selon l'heure.
-              - Titre « Fateh ✦ » et avatar avec anneau dégradé violet/indigo.
-            - **Hero Card « Reprendre la lecture »** :
-              - Affiche le dernier manga lu avec couverture 2:3, titre, numéro de chapitre et badge pulsé.
-              - Bouton pilule violet « Reprendre » ouvrant directement le lecteur.
-            - **Thème Sombre OLED forcé** :
-              - Verrouillage du thème sombre Dark Violet (#08090E & #8B5CF6) même en mode jour système.
-            - **Mise à niveau directe** : Version 0.21.5 (code 41) permettant la mise à jour directe par-dessus l'APK précédente.
+            - **Signature permanente (Keystore fixe)** :
+              - Clé cryptographique officielle Yomu intégrée au projet (valide jusqu'en 2054).
+              - **Plus besoin de désinstaller l'application** : toutes les futures versions se mettront à jour directement sans conflit de signature !
+            - **Écran d'accueil Yomu toujours visible** :
+              - Salutation dynamique (« Bonjour » / « Good evening, Fateh ✦ ») avec avatar violet/indigo.
+              - **Hero Card Découverte** au premier lancement : accès direct au catalogue Keiyoushi et à la recherche globale.
+              - **Hero Card Reprendre** dès qu'un manga est lu : reprise directe en un clic avec pochette 2:3 et badge pulsé.
+              - Suppression du sas de bienvenue Mihon : l'accueil Yomu s'affiche immédiatement à l'ouverture.
+            - **Dock de navigation violet Dark Violet** :
+              - Barre inférieure et latérale stylisée Dark Violet (#0F111A) avec pastilles de sélection violettes (#3B1A78 / #A78BFA).
+              - Position latérale droite et centrée en mode Galaxy Z Fold déplié.
+            - **Tests et captures d'écran automatisés** :
+              - Démarrage sous émulateur Android dans GitHub Actions avec captures d'écran réelles d'accueil jointes à la release.
 
-            ### Téléchargement :
+            ### Fichiers :
             - **`yomu-arm64-v8a.apk`** : Pour Galaxy Z Fold (architecture 64-bit).
-            - **`yomu-universal.apk`** : Pour tous appareils Android.
+            - **`yomu-universal.apk`** : Compatible tous appareils Android.
+            - **`screenshot_home_closed.png` / `screenshot_home_unfolded.png`** : Aperçus réels générés par le CI.
           files: |
             release-apks/yomu-arm64-v8a.apk
             release-apks/yomu-universal.apk
             release-apks/*.apk
+            release-apks/*.png
           draft: false
           prerelease: false
         env:

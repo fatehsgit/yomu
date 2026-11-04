@@ -60,6 +60,7 @@ fun LibraryContent(
             YomuHomeHeader(
                 lastRead = lastReadItem,
                 onContinueReading = onContinueReadingHistory,
+                onSearchClick = onGlobalSearchClicked,
             )
         }
 
