@@ -46,7 +46,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    val yomuKeystoreFile = rootProject.file("yomu.keystore")
+    val yomuKeystoreFile = layout.projectDirectory.file("yomu.keystore").asFile.takeIf { it.exists() }
+        ?: layout.settingsDirectory.file("yomu.keystore").asFile
     signingConfigs {
         named("debug") {
             if (yomuKeystoreFile.exists()) {
