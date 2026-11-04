@@ -225,7 +225,7 @@ object HomeScreen : Screen() {
     @Composable
     private fun YomuFloatingDock(
         tabs: List<eu.kanade.presentation.util.Tab>,
-        currentTab: eu.kanade.presentation.util.Tab,
+        currentTab: cafe.adriel.voyager.navigator.tab.Tab,
         isTablet: Boolean,
         onTabSelected: (eu.kanade.presentation.util.Tab) -> Unit,
         badgeProvider: @Composable (eu.kanade.presentation.util.Tab) -> (@Composable () -> Unit)?,
@@ -314,7 +314,7 @@ object HomeScreen : Screen() {
                 shadowElevation = 16.dp,
                 modifier = modifier
                     .navigationBarsPadding()
-                    .padding(horizontal = 20.dp, bottom = 12.dp)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
                     .widthIn(max = 440.dp)
                     .fillMaxWidth(),
             ) {
