@@ -34,7 +34,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build APKs
-        run: ./gradlew assembleRelease -Pdist=ci --stacktrace
+        run: ./gradlew assembleRelease -Pdist=ci -Pinclude-telemetry=false --stacktrace
 
       - name: Prepare APKs
         run: |
