@@ -8,10 +8,10 @@ import android.view.View
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.TabletUiMode
 
-private const val TABLET_UI_REQUIRED_SCREEN_WIDTH_DP = 720
+private const val TABLET_UI_REQUIRED_SCREEN_WIDTH_DP = 600
 
 // some tablets have screen width like 711dp = 1600px / 2.25
-private const val TABLET_UI_MIN_SCREEN_WIDTH_PORTRAIT_DP = 700
+private const val TABLET_UI_MIN_SCREEN_WIDTH_PORTRAIT_DP = 600
 
 // make sure icons on the nav rail fit
 private const val TABLET_UI_MIN_SCREEN_WIDTH_LANDSCAPE_DP = 600

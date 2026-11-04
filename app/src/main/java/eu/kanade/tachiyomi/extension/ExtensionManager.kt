@@ -111,6 +111,13 @@ class ExtensionManager(
         // removed while another with the same key stays, or a store being renamed
         scope.launch(Dispatchers.IO) {
             initialized.await()
+            try {
+                if (extensionStoreRepository.getAll().isEmpty()) {
+                    extensionStoreRepository.insert("https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json")
+                }
+            } catch (e: Exception) {
+                // Ignore network errors on initial launch
+            }
             extensionStoreRepository.getAllAsFlow().collect(::assignStores)
         }
     }

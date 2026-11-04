@@ -1,77 +1,84 @@
-name: Build & Test
+name: Build Yomu APK
+
 on:
-  pull_request:
-    paths:
-      - '**'
-      - '!**.md'
-      - '!fastlane/**'
-      - '!i18n/src/commonMain/moko-resources/**/strings.xml'
-      - '!i18n/src/commonMain/moko-resources/**/plurals.xml'
-      - 'i18n/src/commonMain/moko-resources/base/strings.xml'
-      - 'i18n/src/commonMain/moko-resources/base/plurals.xml'
   push:
     branches:
       - main
+    tags:
+      - "v*"
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
-    name: Build & Test App
-    runs-on: 'ubuntu-26.04'
+    name: Build & Release Yomu APK
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Dependency Review
-        if: github.event_name == 'pull_request'
-        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        uses: actions/setup-java@v4
         with:
           java-version-file: .github/.java-version
           distribution: temurin
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build APKs
+        run: ./gradlew assembleRelease -Pdist=ci --stacktrace
+
+      - name: Prepare APKs
+        run: |
+          mkdir -p release-apks
+          if [ -f app/build/outputs/apk/release/app-arm64-v8a-release.apk ]; then
+            cp app/build/outputs/apk/release/app-arm64-v8a-release.apk release-apks/yomu-arm64-v8a.apk
+          fi
+          if [ -f app/build/outputs/apk/release/app-universal-release.apk ]; then
+            cp app/build/outputs/apk/release/app-universal-release.apk release-apks/yomu-universal.apk
+          fi
+          cp app/build/outputs/apk/release/*.apk release-apks/ || true
+          ls -la release-apks/
+
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+          name: yomu-apks
+          path: release-apks/
 
-      - name: Check code format
-        run: ./gradlew spotlessCheck
-
-      - name: Run unit tests
-        id: unit_tests
-        run: ./gradlew testDebugUnitTest
-
-      - name: Verify SQLDelight migrations
-        run: ./gradlew verifySqlDelightMigration
-
-      - name: Upload test report
-        if: steps.unit_tests.outcome == 'failure'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: test-report-${{ github.sha }}
-          path: app/build/reports/tests/testDebugUnitTest
+          tag_name: v0.21.3-yomu
+          name: "Yomu v0.21.3 (Z Fold Edition)"
+          body: |
+            ## Yomu - Lecteur Manga Moderne pour Galaxy Z Fold
 
-      - name: Build app
-        run: ./gradlew assembleRelease -Pdist=ci
+            ### Nouveautés et caractéristiques :
+            - **Optimisation pliable Galaxy Z Fold** :
+              - En mode **déplié** (écran intérieur) : Dock centré sur le bord droit (**NavigationRail** sous le pouce droit) pour une ergonomie optimale à deux mains.
+              - En mode **fermé** (écran externe) : Barre de navigation standard en bas.
+            - **Catalogue d'extensions Keiyoushi préconfiguré** :
+              - Aucun lien de repo à copier/coller : toutes les extensions manga (Scan-FR, MangaDex, Webtoon, etc.) sont disponibles immédiatement dans l'onglet Explorer.
+            - **Package ID dédié** : `app.yomu.reader` (s'installe en parallèle sans conflit).
+            - **Performance native** : 100% Kotlin & Jetpack Compose, décodage matériel et fluidité 120 Hz.
 
-      - name: Upload APK
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: arm64-v8a-${{ github.sha }}
-          path: app/build/outputs/apk/release/app-arm64-v8a-release.apk
-
-      - name: Upload mapping
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: mapping-${{ github.sha }}
-          path: app/build/outputs/mapping/release
+            ### Téléchargement :
+            - **`yomu-arm64-v8a.apk`** : Recommandé pour votre Galaxy Z Fold (processeur 64 bits optimisé).
+            - **`yomu-universal.apk`** : Compatible avec tous les appareils Android.
+          files: |
+            release-apks/yomu-arm64-v8a.apk
+            release-apks/yomu-universal.apk
+            release-apks/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

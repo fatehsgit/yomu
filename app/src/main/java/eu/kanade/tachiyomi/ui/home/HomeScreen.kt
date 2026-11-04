@@ -22,6 +22,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -98,30 +100,39 @@ object HomeScreen : Screen() {
                     }
                 }
 
-                NavigationSuiteScaffold(
-                    navigationSuiteType = navigationSuiteType,
-                    state = navigationSuiteState,
-                    navigationSuiteColors = NavigationSuiteDefaults.colors(
-                        navigationRailContainerColor = MaterialTheme.colorScheme
-                            .surfaceColorAtElevation(3.dp),
-                    ),
-                    navigationItemVerticalArrangement = Arrangement.Center,
-                    navigationItems = {
-                        TABS.fastForEach { NavigationSuiteItem(it, navigationSuiteType) }
-                    },
+                val isFoldUnfolded = tabletUi
+                CompositionLocalProvider(
+                    LocalLayoutDirection provides if (isFoldUnfolded) LayoutDirection.Rtl else LayoutDirection.Ltr,
                 ) {
-                    AnimatedContent(
-                        targetState = tabNavigator.current,
-                        transitionSpec = {
-                            materialFadeThroughIn(
-                                initialScale = 1f,
-                                durationMillis = TabFadeDuration,
-                            ) togetherWith materialFadeThroughOut(durationMillis = TabFadeDuration)
+                    NavigationSuiteScaffold(
+                        navigationSuiteType = navigationSuiteType,
+                        state = navigationSuiteState,
+                        navigationSuiteColors = NavigationSuiteDefaults.colors(
+                            navigationRailContainerColor = MaterialTheme.colorScheme
+                                .surfaceColorAtElevation(3.dp),
+                        ),
+                        navigationItemVerticalArrangement = Arrangement.Center,
+                        navigationItems = {
+                            TABS.fastForEach { NavigationSuiteItem(it, navigationSuiteType) }
                         },
-                        label = "tabContent",
                     ) {
-                        tabNavigator.saveableState(key = "currentTab", it) {
-                            it.Content()
+                        CompositionLocalProvider(
+                            LocalLayoutDirection provides LayoutDirection.Ltr,
+                        ) {
+                            AnimatedContent(
+                                targetState = tabNavigator.current,
+                                transitionSpec = {
+                                    materialFadeThroughIn(
+                                        initialScale = 1f,
+                                        durationMillis = TabFadeDuration,
+                                    ) togetherWith materialFadeThroughOut(durationMillis = TabFadeDuration)
+                                },
+                                label = "tabContent",
+                            ) {
+                                tabNavigator.saveableState(key = "currentTab", it) {
+                                    it.Content()
+                                }
+                            }
                         }
                     }
                 }
@@ -174,32 +185,34 @@ object HomeScreen : Screen() {
         val navigator = LocalNavigator.currentOrThrow
         val scope = rememberCoroutineScope()
         val selected = tabNavigator.current::class == tab::class
-        NavigationSuiteItem(
-            navigationSuiteType = navigationSuiteType,
-            selected = selected,
-            onClick = {
-                if (!selected) {
-                    tabNavigator.current = tab
-                } else {
-                    scope.launch { tab.onReselect(navigator) }
-                }
-            },
-            icon = {
-                Icon(
-                    painter = tab.options.icon!!,
-                    contentDescription = tab.options.title,
-                )
-            },
-            label = {
-                Text(
-                    text = tab.options.title,
-                    style = MaterialTheme.typography.labelLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            badge = tabBadge(tab),
-        )
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            NavigationSuiteItem(
+                navigationSuiteType = navigationSuiteType,
+                selected = selected,
+                onClick = {
+                    if (!selected) {
+                        tabNavigator.current = tab
+                    } else {
+                        scope.launch { tab.onReselect(navigator) }
+                    }
+                },
+                icon = {
+                    Icon(
+                        painter = tab.options.icon!!,
+                        contentDescription = tab.options.title,
+                    )
+                },
+                label = {
+                    Text(
+                        text = tab.options.title,
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                badge = tabBadge(tab),
+            )
+        }
     }
 
     @Composable
