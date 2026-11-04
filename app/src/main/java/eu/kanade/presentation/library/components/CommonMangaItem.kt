@@ -127,14 +127,14 @@ private fun BoxScope.CoverTextOverlay(
 ) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp))
+            .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
             .background(
                 Brush.verticalGradient(
                     0f to Color.Transparent,
-                    1f to Color(0xAA000000),
+                    1f to Color(0xDD08090E),
                 ),
             )
-            .fillMaxHeight(0.33f)
+            .fillMaxHeight(0.35f)
             .fillMaxWidth()
             .align(Alignment.BottomCenter),
     )
@@ -298,7 +298,8 @@ private fun GridItemSelectable(
 ) {
     Box(
         modifier = modifier
-            .clip(MaterialTheme.shapes.small)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f))
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick,

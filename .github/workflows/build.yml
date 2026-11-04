@@ -57,23 +57,28 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.3-yomu
-          name: "Yomu v0.21.3 (Z Fold Edition)"
+          tag_name: v0.21.4-yomu
+          name: "Yomu v0.21.4 (Design Sombre Violet OLED & Z Fold)"
           body: |
-            ## Yomu - Lecteur Manga Moderne pour Galaxy Z Fold
+            ## Yomu v0.21.4 — Design Sombre Violet OLED & Galaxy Z Fold
 
-            ### Nouveautés et caractéristiques :
-            - **Optimisation pliable Galaxy Z Fold** :
-              - En mode **déplié** (écran intérieur) : Dock centré sur le bord droit (**NavigationRail** sous le pouce droit) pour une ergonomie optimale à deux mains.
-              - En mode **fermé** (écran externe) : Barre de navigation standard en bas.
-            - **Catalogue d'extensions Keiyoushi préconfiguré** :
-              - Aucun lien de repo à copier/coller : toutes les extensions manga (Scan-FR, MangaDex, Webtoon, etc.) sont disponibles immédiatement dans l'onglet Explorer.
-            - **Package ID dédié** : `app.yomu.reader` (s'installe en parallèle sans conflit).
-            - **Performance native** : 100% Kotlin & Jetpack Compose, décodage matériel et fluidité 120 Hz.
+            ### Nouveautés de cette version :
+            - **Nouveau Thème Visuel Natif (Palette Maquette)** :
+              - Fond sombre OLED profond (`#08090E`) et surfaces nuit (`#0F111A`)
+              - Accents violet électrique (`#8B5CF6` / `#A78BFA`) pour les sélections, badges et boutons
+              - Cartes de manga stylisées (`#141624`) avec coins arrondis modernes (12 dp / 16 dp)
+              - Badges de chapitres non lus violet et téléchargements émeraude (`#34D399`)
+              - Thème sombre et palette Yomu actifs par défaut sur tous les appareils, y compris Android 17 / One UI 9 (sans écrasement par Monet).
+            - **Optimisation pliable Galaxy Z Fold (Seuil 550 dp)** :
+              - Écran intérieur déplié (576–588 dp) : bascule automatique en mode tablette avec Navigation Rail sur le côté droit sous le pouce.
+              - Écran externe fermé : navigation compacte en bas.
+            - **Catalogue Keiyoushi & Sources intégrées** :
+              - Sources manga directement opérationnelles dans l'onglet Explorer.
+            - **Mise à niveau directe** : Version 0.21.4 (code 40) permettant la mise à jour directe par-dessus l'APK précédente.
 
             ### Téléchargement :
-            - **`yomu-arm64-v8a.apk`** : Recommandé pour votre Galaxy Z Fold (processeur 64 bits optimisé).
-            - **`yomu-universal.apk`** : Compatible avec tous les appareils Android.
+            - **`yomu-arm64-v8a.apk`** : Pour Galaxy Z Fold (architecture 64-bit).
+            - **`yomu-universal.apk`** : Pour tous appareils Android.
           files: |
             release-apks/yomu-arm64-v8a.apk
             release-apks/yomu-universal.apk
