@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
@@ -219,22 +217,6 @@ object HomeScreen : Screen() {
                     )
                 },
                 badge = tabBadge(tab),
-                colors = NavigationSuiteDefaults.itemColors(
-                    navigationBarItemColors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFFA78BFA),
-                        selectedTextColor = Color.White,
-                        indicatorColor = Color(0xFF3B1A78),
-                        unselectedIconColor = Color(0xFF94A3B8),
-                        unselectedTextColor = Color(0xFF94A3B8),
-                    ),
-                    navigationRailItemColors = NavigationRailItemDefaults.colors(
-                        selectedIconColor = Color(0xFFA78BFA),
-                        selectedTextColor = Color.White,
-                        indicatorColor = Color(0xFF3B1A78),
-                        unselectedIconColor = Color(0xFF94A3B8),
-                        unselectedTextColor = Color(0xFF94A3B8),
-                    ),
-                ),
             )
         }
     }
