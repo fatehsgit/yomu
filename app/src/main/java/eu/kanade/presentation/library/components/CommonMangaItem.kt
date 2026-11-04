@@ -127,14 +127,14 @@ private fun BoxScope.CoverTextOverlay(
 ) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
+            .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
             .background(
                 Brush.verticalGradient(
                     0f to Color.Transparent,
-                    1f to Color(0xDD08090E),
+                    1f to Color(0xDD0B0814),
                 ),
             )
-            .fillMaxHeight(0.35f)
+            .fillMaxHeight(0.38f)
             .fillMaxWidth()
             .align(Alignment.BottomCenter),
     )
@@ -248,8 +248,9 @@ private fun MangaGridCover(
         if (badgesStart != null) {
             BadgeGroup(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(6.dp)
                     .align(Alignment.TopStart),
+                shape = RoundedCornerShape(6.dp),
                 content = badgesStart,
             )
         }
@@ -257,8 +258,9 @@ private fun MangaGridCover(
         if (badgesEnd != null) {
             BadgeGroup(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(6.dp)
                     .align(Alignment.TopEnd),
+                shape = RoundedCornerShape(6.dp),
                 content = badgesEnd,
             )
         }

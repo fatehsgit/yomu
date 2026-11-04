@@ -6,8 +6,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -713,6 +716,12 @@ private fun TagsChip(
         SuggestionChip(
             modifier = modifier,
             onClick = onClick,
+            shape = RoundedCornerShape(999.dp),
+            colors = SuggestionChipDefaults.suggestionChipColors(
+                containerColor = Color(0xFF161426),
+                labelColor = Color(0xFFA1A1AA),
+            ),
+            border = BorderStroke(1.dp, Color(0xFF2A243D)),
             label = { Text(text = text, style = MaterialTheme.typography.bodySmall) },
         )
     }

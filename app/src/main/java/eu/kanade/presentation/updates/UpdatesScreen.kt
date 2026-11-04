@@ -2,9 +2,11 @@ package eu.kanade.presentation.updates
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -132,7 +134,10 @@ fun UpdateScreen(
                         }
                     } else {
                         FastScrollLazyColumn(
-                            contentPadding = contentPadding,
+                            contentPadding = PaddingValues(
+                                top = contentPadding.calculateTopPadding(),
+                                bottom = contentPadding.calculateBottomPadding() + 96.dp,
+                            ),
                         ) {
                             updatesLastUpdatedItem(lastUpdated)
 

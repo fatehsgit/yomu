@@ -37,8 +37,8 @@ fun BadgeGroup(
 fun Badge(
     text: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.secondary,
-    textColor: Color = MaterialTheme.colorScheme.onSecondary,
+    color: Color = Color(0xFF8B5CF6),
+    textColor: Color = Color.White,
     shape: Shape = RectangleShape,
 ) {
     Text(
@@ -46,9 +46,9 @@ fun Badge(
         modifier = modifier
             .clip(shape)
             .background(color)
-            .padding(horizontal = 3.dp, vertical = 1.dp),
+            .padding(horizontal = 5.dp, vertical = 2.dp),
         color = textColor,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         maxLines = 1,
         style = MaterialTheme.typography.bodySmall,
     )

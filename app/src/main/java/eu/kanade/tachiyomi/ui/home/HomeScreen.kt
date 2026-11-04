@@ -135,7 +135,7 @@ object HomeScreen : Screen() {
                                 if (tabletUi) {
                                     Modifier.padding(end = if (isDockVisible) 84.dp else 0.dp)
                                 } else {
-                                    Modifier.padding(bottom = if (isDockVisible) 76.dp else 0.dp)
+                                    Modifier // Mode immersif bord-à-bord : les jaquettes défilent derrière le dock
                                 }
                             ),
                     ) {

@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SmallExtendedFloatingActionButton
@@ -36,12 +37,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAll
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastMap
@@ -330,11 +334,15 @@ private fun MangaScreenSmallImpl(
                         text = stringResource(
                             if (state.hasReadChapters) MR.strings.action_resume else MR.strings.action_start,
                         ),
+                        fontWeight = FontWeight.Bold,
                     )
                 },
                 icon = { Icon(imageVector = MaterialSymbols.RoundedFilled.PlayArrow, contentDescription = null) },
                 onClick = onContinueReading,
                 expanded = chapterListState.shouldExpandFAB(),
+                containerColor = Color(0xFF8B5CF6),
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.animateFloatingActionButton(
                     visible = isFABVisible,
                     alignment = Alignment.BottomEnd,
@@ -362,7 +370,7 @@ private fun MangaScreenSmallImpl(
                     contentPadding = PaddingValues(
                         start = contentPadding.calculateStartPadding(layoutDirection),
                         end = contentPadding.calculateEndPadding(layoutDirection),
-                        bottom = contentPadding.calculateBottomPadding(),
+                        bottom = contentPadding.calculateBottomPadding() + 84.dp,
                     ),
                 ) {
                     item(
@@ -560,11 +568,15 @@ fun MangaScreenLargeImpl(
                         text = stringResource(
                             if (state.hasReadChapters) MR.strings.action_resume else MR.strings.action_start,
                         ),
+                        fontWeight = FontWeight.Bold,
                     )
                 },
                 icon = { Icon(imageVector = MaterialSymbols.RoundedFilled.PlayArrow, contentDescription = null) },
                 onClick = onContinueReading,
                 expanded = chapterListState.shouldExpandFAB(),
+                containerColor = Color(0xFF8B5CF6),
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.animateFloatingActionButton(
                     visible = isFABVisible,
                     alignment = Alignment.BottomEnd,
@@ -635,7 +647,7 @@ fun MangaScreenLargeImpl(
                             state = chapterListState,
                             contentPadding = PaddingValues(
                                 top = contentPadding.calculateTopPadding(),
-                                bottom = contentPadding.calculateBottomPadding(),
+                                bottom = contentPadding.calculateBottomPadding() + 84.dp,
                             ),
                         ) {
                             item(
