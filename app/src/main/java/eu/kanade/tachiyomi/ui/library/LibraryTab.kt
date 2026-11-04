@@ -56,6 +56,7 @@ import eu.kanade.presentation.library.components.LibraryContent
 import eu.kanade.presentation.library.components.LibraryToolbar
 import eu.kanade.presentation.library.components.LibraryToolbarTitle
 import eu.kanade.presentation.library.components.YomuHomeHeader
+import eu.kanade.presentation.library.components.YomuReadingStats
 import eu.kanade.presentation.manga.components.LibraryBottomActionMenu
 import eu.kanade.presentation.more.onboarding.GETTING_STARTED_URL
 import eu.kanade.presentation.util.Tab
@@ -67,6 +68,7 @@ import eu.kanade.tachiyomi.ui.home.HomeScreen
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
+import eu.kanade.tachiyomi.ui.stats.StatsScreen
 import eu.kanade.tachiyomi.util.system.workManager
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
@@ -117,6 +119,7 @@ data object LibraryTab : Tab {
         val settingsViewModel = metroViewModel<LibrarySettingsViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val lastReadItem by viewModel.lastReadItem.collectAsStateWithLifecycle()
+        val readingStats by viewModel.readingStats.collectAsStateWithLifecycle()
 
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -227,6 +230,8 @@ data object LibraryTab : Tab {
                                     }
                                 }
                             },
+                            stats = readingStats,
+                            onClickStats = { navigator.push(StatsScreen()) },
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -354,6 +359,8 @@ data object LibraryTab : Tab {
                                 }
                             }
                         },
+                        stats = readingStats,
+                        onClickStats = { navigator.push(StatsScreen()) },
                     )
                 }
             }

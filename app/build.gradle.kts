@@ -37,8 +37,8 @@ android {
     defaultConfig {
         applicationId = "app.yomu.reader"
 
-        versionCode = 47
-        versionName = "0.21.11"
+        versionCode = 48
+        versionName = "0.21.12"
 
         buildConfigField("boolean", "TELEMETRY_INCLUDED", "${Config.includeTelemetry}")
         buildConfigField("boolean", "UPDATER_ENABLED", "${Config.enableUpdater}")

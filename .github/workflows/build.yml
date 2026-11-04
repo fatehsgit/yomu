@@ -86,7 +86,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: yomu-v0.21.11-release
+          name: yomu-v0.21.12-release
           path: |
             release-apks/*.apk
             release-apks/*.png
@@ -94,18 +94,19 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.21.11-yomu
-          name: "Yomu v0.21.11 (Correctif Défilement Bibliothèque — Fluidité Native Restaurée)"
+          tag_name: v0.21.12-yomu
+          name: "Yomu v0.21.12 (Statistiques de lecture discrètes & ultra-compactes)"
           body: |
-            ## Yomu v0.21.11 — Correctif Défilement Bibliothèque
+            ## Yomu v0.21.12 — Statistiques de lecture discrètes & ultra-compactes
 
-            ### Correctifs de cette version :
-            - **Bibliothèque (Défilement fluide restauré)** :
-              - Correction complète du problème où le défilement vers le haut était bloqué sur les écrans de smartphones et pliables (notamment Galaxy Z Fold).
-              - Suppression du mécanisme d'interception gestuelle instable (`NestedScrollConnection` et décalage d'offset manuel) qui entrait en conflit avec le Pull-to-Refresh.
-              - Restauration de la gestion native et fluide de Jetpack Compose pour le défilement et le rafraîchissement.
-            - **Design & UI conservés** :
-              - Toute la refonte sombre OLED, les liserés violets, l'en-tête d'accueil avec profil Fateh et les capsules restent 100% actifs.
+            ### Nouveautés de cette version :
+            - **Bibliothèque (Ligne de micro-capsules statistiques)** :
+              - Remplacement du volumineux bloc « Reprendre la lecture » par une rangée fine et élégante de 4 micro-capsules translucides (`⏱ Temps de lecture`, `📖 Chapitres lus`, `🔥 Série active`, `📚 Titres en bibliothèque`).
+              - Gain d'espace vertical maximal : la grille de mangas et webtoons remonte directement sous les filtres de catégories.
+              - Clic interactif : toucher une capsule ouvre directement l'écran détaillé des statistiques de lecture (`StatsScreen`).
+              - Finition sombre OLED pure avec liserés subtils violets néon (`#8B5CF6` / `#A78BFA`), conforme à la maquette validée par Fateh.
+            - **Stabilité & Défilement** :
+              - Maintien du défilement natif fluide et réactif sans aucun blocage.
 
             ### Fichiers :
             - **`yomu-arm64-v8a.apk`** : Recommandé pour Galaxy Z Fold (architecture 64-bit).

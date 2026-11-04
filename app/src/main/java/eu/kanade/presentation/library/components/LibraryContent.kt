@@ -58,6 +58,8 @@ fun LibraryContent(
     onClickRefreshCategory: () -> Unit = {},
     onClickGlobalUpdate: () -> Unit = {},
     onClickOpenRandomManga: () -> Unit = {},
+    stats: YomuReadingStats? = null,
+    onClickStats: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(currentPage) { categories.size }
@@ -70,7 +72,7 @@ fun LibraryContent(
             end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
         ),
     ) {
-        // Header d'accueil Yomu (Bonjour Fateh, Recherche capsule, Hero Card)
+        // Header d'accueil Yomu (Bonjour Fateh, Recherche capsule, Micro-capsules stats)
         if (selection.isEmpty()) {
             YomuHomeHeader(
                 lastRead = lastReadItem,
@@ -84,6 +86,8 @@ fun LibraryContent(
                 onClickRefresh = onClickRefreshCategory,
                 onClickGlobalUpdate = onClickGlobalUpdate,
                 onClickOpenRandomManga = onClickOpenRandomManga,
+                stats = stats,
+                onClickStats = onClickStats,
             )
         }
 

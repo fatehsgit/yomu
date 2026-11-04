@@ -62,7 +62,10 @@ import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
 import tachiyomi.domain.chapter.model.Chapter
 import tachiyomi.domain.history.interactor.GetHistory
 import tachiyomi.domain.history.interactor.GetNextChapters
+import tachiyomi.domain.history.interactor.GetTotalReadDuration
 import tachiyomi.domain.history.model.HistoryWithRelations
+import eu.kanade.presentation.library.components.YomuReadingStats
+import java.util.Calendar
 import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.model.LibrarySort
@@ -101,6 +104,7 @@ class LibraryViewModel(
     private val downloadCache: DownloadCache,
     private val trackerManager: TrackerManager,
     private val getHistory: GetHistory,
+    private val getTotalReadDuration: GetTotalReadDuration,
 ) : ViewModel() {
 
     private val subscriberGate = SubscriberGate()
@@ -110,6 +114,43 @@ class LibraryViewModel(
         .distinctUntilChanged()
         .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope + subscriberGate, SharingStarted.Eagerly, null)
+
+    val readingStats: StateFlow<YomuReadingStats> = combine(
+        getLibraryManga.subscribe(),
+        getHistory.subscribe(""),
+    ) { libraryManga, history ->
+        val distinctManga = libraryManga.distinctBy { it.id }
+        val mangaCount = distinctManga.size
+        val chaptersRead = distinctManga.sumOf { it.readCount }
+        val durationMillis = try {
+            getTotalReadDuration.await()
+        } catch (_: Exception) {
+            history.sumOf { it.readDuration }
+        }
+
+        val durationText = formatReadingDuration(durationMillis)
+        val chaptersText = formatChapterCount(chaptersRead)
+        val streakText = calculateStreakText(history)
+        val mangaCountText = mangaCount.toString()
+
+        YomuReadingStats(
+            readDurationText = durationText,
+            chaptersReadText = chaptersText,
+            streakText = streakText,
+            mangaCountText = mangaCountText,
+        )
+    }
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            viewModelScope + subscriberGate,
+            SharingStarted.Eagerly,
+            YomuReadingStats(
+                readDurationText = "0m",
+                chaptersReadText = "0 ch.",
+                streakText = "0 j",
+                mangaCountText = "0",
+            ),
+        )
 
     private val searchQuery = MutableStateFlow<String?>(null)
 
@@ -862,5 +903,60 @@ class LibraryViewModel(
             }
             return LibraryToolbarTitle(title, count)
         }
+    }
+
+    private fun formatReadingDuration(durationMillis: Long): String {
+        val totalMinutes = durationMillis / 1000 / 60
+        val hours = totalMinutes / 60
+        val minutes = totalMinutes % 60
+        return when {
+            hours > 0 && minutes > 0 -> "${hours}h ${minutes}m"
+            hours > 0 -> "${hours}h"
+            minutes > 0 -> "${minutes}m"
+            else -> "0m"
+        }
+    }
+
+    private fun formatChapterCount(count: Long): String {
+        return if (count >= 1000) {
+            val formatted = "%,d".format(java.util.Locale.FRENCH, count).replace(',', ' ')
+            "$formatted ch."
+        } else {
+            "$count ch."
+        }
+    }
+
+    private fun calculateStreakText(history: List<HistoryWithRelations>): String {
+        if (history.isEmpty()) return "0 j"
+        val readDays = history.mapNotNull { it.readAt?.toEpochMilliseconds() }
+            .map { millis ->
+                val cal = Calendar.getInstance().apply { timeInMillis = millis }
+                "${cal.get(Calendar.YEAR)}-${cal.get(Calendar.DAY_OF_YEAR)}"
+            }.toSet()
+
+        val today = Calendar.getInstance()
+        val todayKey = "${today.get(Calendar.YEAR)}-${today.get(Calendar.DAY_OF_YEAR)}"
+        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
+        val yesterdayKey = "${yesterday.get(Calendar.YEAR)}-${yesterday.get(Calendar.DAY_OF_YEAR)}"
+
+        val checkCal = Calendar.getInstance()
+        if (todayKey !in readDays && yesterdayKey !in readDays) {
+            return "0 j"
+        }
+        if (todayKey !in readDays && yesterdayKey in readDays) {
+            checkCal.add(Calendar.DAY_OF_YEAR, -1)
+        }
+
+        var streak = 0
+        while (true) {
+            val key = "${checkCal.get(Calendar.YEAR)}-${checkCal.get(Calendar.DAY_OF_YEAR)}"
+            if (key in readDays) {
+                streak++
+                checkCal.add(Calendar.DAY_OF_YEAR, -1)
+            } else {
+                break
+            }
+        }
+        return if (streak <= 1) "$streak jour" else "$streak jours"
     }
 }
